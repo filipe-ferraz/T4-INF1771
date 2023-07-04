@@ -205,22 +205,25 @@ class GameAI():
         #retornos possiveis: virar_direita, virar_esquerda, andar, atacar, pegar_ouro, pegar_anel, pegar_powerup, andar_re
         self.previousStateMachine = self.stateMachine
         
+        
         if self.stateMachine == "hunt":
-            n = random.randint(0,99)
+            n = random.randint(0, 99)
             if n < 10:
-                return "virar_direita"
+                self.command.append("virar_direita")
             elif n < 20:
-                return "virar_esquerda"
+                self.command.append("virar_esquerda")
             else:
-                return "andar"
-            
+                self.command.append("andar")
+
         elif self.stateMachine == "bonk":
-            n = random.randint(0,99)
+            n = random.randint(0, 99)
             self.stateMachine = "hunt"
             if n < 50:
-                return "virar_direita"
+                self.command.append("virar_direita")
+                
             else:
-                return "virar_esquerda"
+                self.command.append("virar_esquerda")
+            self.command.append("andar")
             
         elif self.stateMachine == "its_a_trap":
             if self.previousStateMachine == "its_a_trap":
@@ -240,11 +243,11 @@ class GameAI():
         elif self.stateMachine == "destroy":
             pass
         elif self.stateMachine == "gather_powerup":
-            pass
+            return "pegar_powerup"
         elif self.stateMachine == "gather_ouro":
-            pass
+            return "pegar_ouro"
         elif self.stateMachine == "gather_anel":
-            pass
+            return "pegar_anel"
     
         
         if self.command != []:
@@ -253,4 +256,4 @@ class GameAI():
             return ret
         return ""
     
-    def 
+ 
