@@ -32,11 +32,9 @@ class GameAI():
     score = 0
     energy = 0
     command = []
-    scoreDelta = 0
     stateMachine = "hunt"
     previousStateMachine = ""
     observations = []
-    cmdCount = 0
     
 
     # <summary>
@@ -157,14 +155,14 @@ class GameAI():
     # </summary>
     # <returns>command string to new decision</returns>
     def GetDecision(self):
-        print ("---\nObservations: " + str(self.observations) + "\nEnergia: " + str(self.energy) + "\nState: " + self.stateMachine + "\nCommand Buffer: " + str(self.command))
+        print ("---\nObservations: " + str(self.observations) + "\nEnergia: " + str(self.energy) + "\nPontos: " + str(self.score) + "\nState: " + self.stateMachine + "\nCommand Buffer: " + str(self.command))
         return self.StateMachineEngine(self.observations)
     
     def StateMachineEngine (self, observations):
         #retornos possiveis: virar_direita, virar_esquerda, andar, atacar, pegar_ouro, pegar_anel, pegar_powerup, andar_re
         
         #definição do novo estado a partir das informações do estado atual e das observações
-        if not observations: #não há observações
+        if not observations or any(substring in "flash, enemy" for substring in observations) : #não há observações válidas
             if (self.stateMachine == "gather_ouro"
                or self.stateMachine == "gather_anel"
                or self.stateMachine == "gather_powerup"
@@ -187,11 +185,11 @@ class GameAI():
             else:
                 self.stateMachine = "fly_you_fool"
                     
-        elif any(substring in "bluelight" for substring in observations):
+        elif any(substring in "blueLight" for substring in observations):
             if self.stateMachine == "hunt":
                 self.stateMachine = "gather_powerup"
                 
-        elif any(substring in "redlight" for substring in observations):
+        elif any(substring in "redLight" for substring in observations):
             if self.stateMachine == "hunt":
                 self.stateMachine = "gather_ouro"
             elif self.stateMachine == "gather_ouro":
@@ -204,8 +202,8 @@ class GameAI():
             
         elif any(substring in "hit" for substring in observations):
             if self.energy > 25:
+                self.command = []
                 self.stateMachine = "destroy"
-                self.cmdCount = 0
             else:
                 self.stateMachine = "fly_you_fool"
         
@@ -249,9 +247,12 @@ class GameAI():
                 self.command.append("virar_direita")
                 self.command.append("atacar")
                 self.command.append("virar_direita")
-                self.command.append("atacar")
                 self.command.append("virar_direita")
                 self.command.append("atacar")
+                self.command.append("andar_re")
+                self.command.append("virar_direita")
+                self.command.append("atacar")
+                
             
             elif self.stateMachine == "destroy":
                 self.command.append("atacar")
@@ -268,8 +269,10 @@ class GameAI():
             elif self.stateMachine == "gather_anel":
                 self.command.append("pegar_anel")
 
-        self.observations = []
-        ret = self.command[0]
-        print("ret = " + ret)
-        self.command.remove(ret)
-        return ret
+        if self.command:
+            self.observations = []
+            ret = self.command[0]
+            print ("ret = " + ret)
+            self.command.remove(ret)
+            return ret
+        return ""
