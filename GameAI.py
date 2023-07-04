@@ -225,7 +225,24 @@ class GameAI():
                 self.command.append("virar_direita") #MUDANÇA: mudar pra random?
                 
             elif self.stateMachine == "fly_you_fool":
-                pass #FALTA: função de fuga, precisa eventualmente mudar o estado para "hunt"
+                target_x = random.randint(0, 59)
+                target_y = random.randint(0, 34)
+
+                dx = target_x - self.player.x
+                dy = target_y - self.player.y
+
+                if dx < 0:
+                    self.command.append("andar_re")
+                elif dx > 0:
+                    self.command.append("andar")
+
+                if dy < 0:
+                    self.command.append("virar_direita")
+                elif dy > 0:
+                    self.command.append("virar_esquerda")
+
+                self.command.append("andar")
+                self.stateMachine="hunt"
                 
             elif self.stateMachine == "seek":
                 self.command.append("atacar")
