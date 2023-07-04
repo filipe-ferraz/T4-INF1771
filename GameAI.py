@@ -171,12 +171,13 @@ class GameAI():
                or self.stateMachine == "seek"
                or self.stateMachine == "destroy"):
                 self.stateMachine = "hunt"
-            elif (self.stateMachine == "bonk" or self.stateMachine == "its_a_trap"):
+            elif (self.stateMachine == "bonk"
+               or self.stateMachine == "its_a_trap"):
                 self.stateMachine = self.previousStateMachine
             
         elif any(substring in "breeze" for substring in observations):
             if self.stateMachine == "hunt" or self.stateMachine == "fly_you_fool":
-                self.previousStateMachine = self.stateMachine
+                self.previousStateMachine = "hunt"
                 self.stateMachine = "its_a_trap"
                 
         elif any(substring in "damage, steps" for substring in observations):
@@ -250,6 +251,7 @@ class GameAI():
             elif self.stateMachine == "gather_anel":
                 self.command.append("pegar_anel")
 
+        self.observations = []
         ret = self.command[0]
         print("ret = " + ret)
         self.command.remove(ret)
